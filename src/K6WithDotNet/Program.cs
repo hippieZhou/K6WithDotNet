@@ -21,27 +21,31 @@ const int maxLength = 1_000_000;
 app.MapGet("/GetWeatherForecastV1", () =>
 {
     var forecast = new object[maxLength];
-    for (int i = 0; i < forecast.Length; i++)
+    for (var i = 0; i < forecast.Length; i++)
     {
-        forecast[i] =  new {
+        forecast[i] = new
+        {
             Date = DateTime.Now.AddDays(i),
             temperatureC = Random.Shared.Next(-20, 55),
         };
     }
 
-    return forecast;
+    return forecast.Length;
 }).WithName("GetWeatherForecastV1");
 
 app.MapGet("/GetWeatherForecastV2", () =>
 {
-    var forecast = Enumerable.Range(1, maxLength).Select(index =>
-            new
-            {
-                Date = DateTime.Now.AddDays(index),
-                temperatureC = Random.Shared.Next(-20, 55),
-            })
-        .ToArray();
-    return forecast;
+    var forecast = new object[maxLength];
+    Parallel.For(0, maxLength, i =>
+    {
+        forecast[i] = new
+        {
+            Date = DateTime.Now.AddDays(i),
+            temperatureC = Random.Shared.Next(-20, 55),
+        };
+    });
+
+    return forecast.Length;
 }).WithName("GetWeatherForecastV2");
 
 app.Run();
