@@ -173,22 +173,40 @@ export default () => {
 
 ![sample-test_v1](images/sample-test_v1.png)
 
-
 我们尝试以同样对脚本，对`GetWeatherForecastV2` 接口进行测试，输出对结果如下图所示：
 
 ![sample-test_v2](images/sample-test_v2.png)
 
 输出的结果中有几个重要指标数据我们需要关注：
 
-- http_req_duration
-- http_reqs
-- iteration_duration
+- http_req_duration：
+- http_reqs：
+- iteration_duration：
+
+通过对这3组数据对比，我们不难看出，在同等压测条件下，`GetWeatherForecastV2` 的性能要优于 `GetWeatherForecastV1`。这也可以从一个侧面反应出并行编程的重要性。
 
 ### 集成 K6 Cloud
 
+此外，我们也可以将脚本上传至云端来进行测试，如下所示：
+
+```bash
+k6 login cloud -t <your token>
+k6 cloud sample-test.js 
+```
+类似的结果如下图所示：
+
+![cloud-stub](images/cloud-stub.webp)
+
+> 注：由于在 K6 的云端来跑脚本的话，需要脚本里面对应的接口可以供其访问，所以可以尝试先将应用部署到外网可访问后再进行这种方式。
+
 ### 集成 Azure Pipelines
 
-### 集成第三方 Dashboard
+此外，K6 还支持集成至 Azure Pipelines 中进行压测，目前 Azure Pipelines 的  Marketplace 已经提供来 [k6 Load Testing](https://marketplace.visualstudio.com/items?itemName=k6.k6-load-test&targetId=2e6ca73d-6618-4635-962b-59b478651116&utm_source=vstsproduct&utm_medium=ExtHubManageList) 插件，可以尝试将其安装至自己的组织中进行使用。
+具体使用方式可以参考文末的相关链接。
+
+### 结果可视化
+
+最后需要介绍的就是结果可视化，目前 K6 支持多种结果可视化方案，比如：Amazon CloudWatch，Cloud，CSV，Datadog...，我们可以根据自己项目的实际情况使用合适的可视化方案。
 
 ## 相关参考
 
