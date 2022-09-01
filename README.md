@@ -64,23 +64,49 @@
 | data_received                       | 接收到的数据量                                                     |
 | iterations                          | 测试中的vu执行js脚本（default函数）的总次数                                 |
 | iteration_duration                  | 完成默认/主函数的完整迭代所花费的时间                                         |
-| dropped_iterations                  | 由于缺少vu（对于达到率执行程序）或缺少时间（由于基于迭代的执行程序中maxDuration过期）而无法启动的迭代次数 |
 
 ### 环境搭建
 
-k6 支持 `Linux`,`Mac`,`Windows`,`Docker`方式来安装，本文以 Mac 系统为例：
-
-```bash
-brew install k6
-```
+k6 支持 `Linux`,`Mac`,`Windows`,`Docker`方式来安装，安装方法也很简单，可以结合自己的实际环境，参考官网的安装方式进行本地环境安装：[Installation](https://k6.io/docs/getting-started/installation/)
 
 ### 常用命令
 
-## 实战展示
+K6 提供两种方式进行压测场景的模拟，一种是 **CLI**，另一种就是通过 **JS** 脚本，这里先罗列一下常用的 **CLI** 命令:
+
+```bash
+k6 help [command] [flags]
+
+# 将测试在 K6 的云端服务执行，需要提前注册 K6 账号并登录
+k6 login [flags]
+k6 cloud [flags]
+
+# 检查脚本
+k6 inspect [file] [flags]
+
+# 执行 load test（本地）
+k6 run [flags]
+
+# 暂停测试
+k6 pause [flags]
+
+# 恢复测试
+k6 resume [flags]
+
+# 扩展测试
+k6 scale [flags]
+
+# 显示测试状态
+k6 stats [flags]
+
+# 显示版本
+k6 version [flags]
+```
+
+## 示例展示
 
 ### Smoke testing
 
-本文采用 .NET 6 中的 MinimalAPI 的方式构建了 2 个测试路由，用于后面的结果对比。示例代码如下所示：
+本文采用 .NET 6 中的 **MinimalAPI** 的方式构建了 2 个测试路由，用于后面的结果对比。示例代码如下所示：
 
 ```csharp
 const int maxLength = 1_000_000;
