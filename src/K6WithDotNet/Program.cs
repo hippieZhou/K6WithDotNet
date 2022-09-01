@@ -44,7 +44,7 @@ app.MapGet("/GetWeatherForecastV2", () =>
         };
     });
 
-    return new {forecast.Length};
+    return Results.Ok(forecast.Length);
 }).WithName("GetWeatherForecastV2");
 
 app.Run();

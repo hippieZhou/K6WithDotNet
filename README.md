@@ -104,14 +104,17 @@ k6 version [flags]
 
 ## 示例展示
 
-### Smoke testing
+这里采用 .NET 6 中的 **MinimalAPI** 的方式构建了 2 个测试路由：
 
-本文采用 .NET 6 中的 **MinimalAPI** 的方式构建了 2 个测试路由，用于后面的结果对比。示例代码如下所示：
+- GetWeatherForecastV1：使用 for 循环的方式并行构建 1_000_000 个对象
+- GetWeatherForecastV2：使用 Parallel 并行构建 1_000_000 个对象
+
+示例代码如下所示：
 
 ```csharp
 const int maxLength = 1_000_000;
 
-app.MapGet("/GetWeatherForecastV1", () =>
+app.MapGet("/GetWeatherForecastV1",  () =>
 {
     var forecast = new object[maxLength];
     for (var i = 0; i < forecast.Length; i++)
@@ -122,8 +125,7 @@ app.MapGet("/GetWeatherForecastV1", () =>
             temperatureC = Random.Shared.Next(-20, 55),
         };
     }
-
-    return forecast.Length;
+    return Results.Ok(forecast.Length);
 }).WithName("GetWeatherForecastV1");
 
 app.MapGet("/GetWeatherForecastV2", () =>
@@ -138,7 +140,7 @@ app.MapGet("/GetWeatherForecastV2", () =>
         };
     });
 
-    return forecast.Length;
+    return Results.Ok(forecast.Length);
 }).WithName("GetWeatherForecastV2");
 ```
 
