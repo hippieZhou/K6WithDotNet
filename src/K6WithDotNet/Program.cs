@@ -18,7 +18,7 @@ app.UseHttpsRedirection();
 
 const int maxLength = 1_000_000;
 
-app.MapGet("/GetWeatherForecastV1", () =>
+app.MapGet("/GetWeatherForecastV1",  () =>
 {
     var forecast = new object[maxLength];
     for (var i = 0; i < forecast.Length; i++)
@@ -29,8 +29,7 @@ app.MapGet("/GetWeatherForecastV1", () =>
             temperatureC = Random.Shared.Next(-20, 55),
         };
     }
-
-    return new {forecast.Length};
+    return Results.Ok(forecast.Length);
 }).WithName("GetWeatherForecastV1");
 
 app.MapGet("/GetWeatherForecastV2", () =>
