@@ -30,7 +30,7 @@ app.MapGet("/GetWeatherForecastV1", () =>
         };
     }
 
-    return forecast.Length;
+    return new {forecast.Length};
 }).WithName("GetWeatherForecastV1");
 
 app.MapGet("/GetWeatherForecastV2", () =>
@@ -45,7 +45,7 @@ app.MapGet("/GetWeatherForecastV2", () =>
         };
     });
 
-    return forecast.Length;
+    return new {forecast.Length};
 }).WithName("GetWeatherForecastV2");
 
 app.Run();
