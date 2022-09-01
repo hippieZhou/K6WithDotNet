@@ -100,6 +100,9 @@ k6 stats [flags]
 
 # 显示版本
 k6 version [flags]
+
+# 模拟10个虚拟用户(VU)，连续压测30秒：
+k6 run --vus 10 --duration 30s script.js
 ```
 
 ## 示例展示
@@ -166,9 +169,20 @@ export default () => {
 };
 ```
 
-执行 `k6 run sample-test.js` 后耐心等待 10s ,输出的结果如下图所示：
+我们先对 `GetWeatherForecastV1` 接口进行测试。执行 `k6 run sample-test.js` 后耐心等待 10s ,输出的结果如下图所示：
 
-![sample-test](images/sample-test.png)
+![sample-test_v1](images/sample-test_v1.png)
+
+
+我们尝试以同样对脚本，对`GetWeatherForecastV2` 接口进行测试，输出对结果如下图所示：
+
+![sample-test_v2](images/sample-test_v2.png)
+
+输出的结果中有几个重要指标数据我们需要关注：
+
+- http_req_duration
+- http_reqs
+- iteration_duration
 
 ### 集成 K6 Cloud
 
