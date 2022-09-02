@@ -164,7 +164,7 @@ app.MapGet("/GetWeatherForecastV2", () =>
 }).WithName("GetWeatherForecastV2");
 ```
 
-创建一个 JS 脚本，内容一下所示：
+创建一个 JS 脚本 `sample-test.js`，内容一下所示：
 
 ```javascript
 import http from "k6/http";
@@ -182,11 +182,11 @@ const BASE_URL = "http://localhost:5188";
 export default () => {
   const resp = http.get(`${BASE_URL}/GetWeatherForecastV1`);
   check(resp, { "status = 200": resp.status === 200 });
-  sleep(1); //S uspend VU execution for the specified duration.
+  sleep(1); // Suspend VU execution for the specified duration.
 };
 ```
 
-我们先对 `GetWeatherForecastV1` 接口进行测试。执行 `k6 run sample-test.js` 后耐心等待 10s ,输出的结果如下图所示：
+在通过 `dotnet run` 将我们的服务启动起来后，我们先对 `GetWeatherForecastV1` 接口进行测试。执行 `k6 run sample-test.js` 后耐心等待 10s ,输出的结果如下图所示：
 
 ![sample-test_v1](images/sample-test_v1.png)
 
@@ -194,13 +194,9 @@ export default () => {
 
 ![sample-test_v2](images/sample-test_v2.png)
 
-输出的结果中有几个重要指标数据我们需要关注：
+通过对这 `http_req_duration` `http_reqs` `iteration_duration` 这 3 组数据对比，我们不难看出，在同等压测条件下，`GetWeatherForecastV2` 的性能要优于 `GetWeatherForecastV1`。这也可以从一个侧面反应出并行编程的重要性。
 
-- http_req_duration：
-- http_reqs：
-- iteration_duration：
-
-通过对这 3 组数据对比，我们不难看出，在同等压测条件下，`GetWeatherForecastV2` 的性能要优于 `GetWeatherForecastV1`。这也可以从一个侧面反应出并行编程的重要性。
+> 我们可以结合上面几种测试类型，编写不同的测试脚本来对我们的程序进行响应的性能压测。
 
 ### 集成 K6 Cloud
 
