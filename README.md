@@ -1,4 +1,26 @@
+<div align="center">
+
 # 使用 k6 对 .NET 进行性能测试
+
+</div>
+
+- [使用 k6 对 .NET 进行性能测试](#使用-k6-对-net-进行性能测试)
+  - [什么是性能测试](#什么是性能测试)
+    - [相关概念解释](#相关概念解释)
+    - [常见性能测试工具](#常见性能测试工具)
+  - [K6 介绍](#k6-介绍)
+    - [常见性能测试类型](#常见性能测试类型)
+    - [关键词解释](#关键词解释)
+    - [环境搭建](#环境搭建)
+    - [常用命令](#常用命令)
+  - [示例展示](#示例展示)
+    - [本地压测](#本地压测)
+    - [集成 K6 Cloud](#集成-k6-cloud)
+    - [集成 Azure Pipelines](#集成-azure-pipelines)
+    - [结果可视化](#结果可视化)
+  - [相关参考](#相关参考)
+
+---
 
 ## 什么是性能测试
 
@@ -7,11 +29,11 @@
 
 ### 相关概念解释
 
-|   | 释意                                                                                             |
-|---|------------------------------------------------------------------------------------------------|
-|QPS| 每秒查询率 Queries Per Second。每秒的响应请求数，也即是最大吞吐能力，是衡量服务器性能端一个重要指标。|
-|TPS| 每秒处理的事务数目 Transactions Per Second。每个 TPS 包含一个完整的请求流程（客户端请求服务端-> 服务端响应并处理【包含数据库访问】 -> 服务端返回给客户端）|
-|RPS| 每秒吞吐率 Requests Per Second。指的是某个并发用户数下单位时间内处理的请求数。在不考虑事务的情况下可以近似与 TPS。|
+|     | 释意                                                                                                                                                       |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| QPS | 每秒查询率 Queries Per Second。每秒的响应请求数，也即是最大吞吐能力，是衡量服务器性能端一个重要指标。                                                      |
+| TPS | 每秒处理的事务数目 Transactions Per Second。每个 TPS 包含一个完整的请求流程（客户端请求服务端-> 服务端响应并处理【包含数据库访问】 -> 服务端返回给客户端） |
+| RPS | 每秒吞吐率 Requests Per Second。指的是某个并发用户数下单位时间内处理的请求数。在不考虑事务的情况下可以近似与 TPS。                                         |
 
 ### 常见性能测试工具
 
@@ -33,31 +55,30 @@
 
 ### 常见性能测试类型
 
-维基百科罗列了多达 **8种** 性能测试类型，感兴趣的小伙伴可以查看文末连接查看更多详细内容。这里结合 K6 主要介绍如下几种测试类型如下几种常见的测试类型：
+维基百科罗列了多达 **8 种** 性能测试类型，感兴趣的小伙伴可以查看文末连接查看更多详细内容。这里结合 K6 主要介绍如下几种测试类型如下几种常见的测试类型：
 
-|                | 释意                                                                                                                 |
-|----------------|--------------------------------------------------------------------------------------------------------------------|
-| Smoke testing  | 中文释意为 **冒烟测试**。是一种常规测试。通过配置最小负载来验证系统的完整性。其主要目的是：验证测试脚本是否有问题；验证系统在最小负载情况下是否出现异常。                                    |
+|                | 释意                                                                                                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Smoke testing  | 中文释意为 **冒烟测试**。是一种常规测试。通过配置最小负载来验证系统的完整性。其主要目的是：验证测试脚本是否有问题；验证系统在最小负载情况下是否出现异常。                                                                       |
 | Load testing   | 中文释意为 **负载测试**。是一种重要的性能测试。主要关注根据并发用户数或每秒请求数评估系统的当前性能。其主要目的是：用于确定系统在正常和峰值条件下的行为，确保当许多用户同时访问应用程序时，应用程序的性能能达到令人满意的程度。 |
-| Stress testing | 中文释意为 **压力测试**。用于确定系统的性能瓶颈。其主要目的是：验证系统在极端条件下的稳定性和可靠性。                                                              |
-| Soak testing   | 中文释意为 **浸泡测试**。其主要目的是：通过较长时间的性能测试来发现系统长时间处于压力之下而导致的性能和可靠性问题。                                                       |
-
+| Stress testing | 中文释意为 **压力测试**。用于确定系统的性能瓶颈。其主要目的是：验证系统在极端条件下的稳定性和可靠性。                                                                                                                           |
+| Soak testing   | 中文释意为 **浸泡测试**。其主要目的是：通过较长时间的性能测试来发现系统长时间处于压力之下而导致的性能和可靠性问题。                                                                                                             |
 
 ### 关键词解释
 
 在 K6 中，通过一些参数配置可以模拟上述的测试场景。常见的参数如下所示：
 
-|                                     | 释意                                                          |
-|-------------------------------------|-------------------------------------------------------------|
-| vus                                 | 当前并发数(虚拟用户数)                                                |
-| vus_max                             | 最大并发数(虚拟用户的最大数量)                                            |
-| rps                                 | 每秒并发请求数                                                     |
-| duration                            | 持续运行时间                                                      |
-| checks                              | 断言成功率                                                       |
-| data_sent                           | 发送的数据量                                                      |
-| data_received                       | 接收到的数据量                                                     |
-| iterations                          | 测试中的vu执行js脚本（default函数）的总次数                                 |
-| iteration_duration                  | 完成默认/主函数的完整迭代所花费的时间                                         |
+|                    | 释意                                             |
+| ------------------ | ------------------------------------------------ |
+| vus                | 当前并发数(虚拟用户数)                           |
+| vus_max            | 最大并发数(虚拟用户的最大数量)                   |
+| rps                | 每秒并发请求数                                   |
+| duration           | 持续运行时间                                     |
+| checks             | 断言成功率                                       |
+| data_sent          | 发送的数据量                                     |
+| data_received      | 接收到的数据量                                   |
+| iterations         | 测试中的 vu 执行 js 脚本（default 函数）的总次数 |
+| iteration_duration | 完成默认/主函数的完整迭代所花费的时间            |
 
 ### 环境搭建
 
@@ -100,6 +121,8 @@ k6 run --vus 10 --duration 30s script.js
 ```
 
 ## 示例展示
+
+### 本地压测
 
 这里采用 .NET 6 中的 **MinimalAPI** 的方式构建了 2 个测试路由：
 
@@ -144,22 +167,22 @@ app.MapGet("/GetWeatherForecastV2", () =>
 创建一个 JS 脚本，内容一下所示：
 
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
-    insecureSkipTLSVerify: true, // skip TLS verify 
-    noConnectionReuse: false, // disable keep-alive connections
-    vus: 1, // 1 user looping for 10 seconds
-    duration: '10s',
+  insecureSkipTLSVerify: true, // skip TLS verify
+  noConnectionReuse: false, // disable keep-alive connections
+  vus: 1, // 1 user looping for 10 seconds
+  duration: "10s",
 };
 
-const BASE_URL = 'http://localhost:5188';
+const BASE_URL = "http://localhost:5188";
 
 export default () => {
-    const resp = http.get(`${BASE_URL}/GetWeatherForecastV1`);
-    check(resp, {"status = 200": resp.status === 200});
-    sleep(1); //S uspend VU execution for the specified duration.
+  const resp = http.get(`${BASE_URL}/GetWeatherForecastV1`);
+  check(resp, { "status = 200": resp.status === 200 });
+  sleep(1); //S uspend VU execution for the specified duration.
 };
 ```
 
@@ -177,7 +200,7 @@ export default () => {
 - http_reqs：
 - iteration_duration：
 
-通过对这3组数据对比，我们不难看出，在同等压测条件下，`GetWeatherForecastV2` 的性能要优于 `GetWeatherForecastV1`。这也可以从一个侧面反应出并行编程的重要性。
+通过对这 3 组数据对比，我们不难看出，在同等压测条件下，`GetWeatherForecastV2` 的性能要优于 `GetWeatherForecastV1`。这也可以从一个侧面反应出并行编程的重要性。
 
 ### 集成 K6 Cloud
 
@@ -185,8 +208,9 @@ export default () => {
 
 ```bash
 k6 login cloud -t <your token>
-k6 cloud sample-test.js 
+k6 cloud sample-test.js
 ```
+
 类似的结果如下图所示：
 
 ![cloud-stub](images/cloud-stub.webp)
@@ -195,7 +219,7 @@ k6 cloud sample-test.js
 
 ### 集成 Azure Pipelines
 
-此外，K6 还支持集成至 Azure Pipelines 中进行压测，目前 Azure Pipelines 的  Marketplace 已经提供来 [k6 Load Testing](https://marketplace.visualstudio.com/items?itemName=k6.k6-load-test&targetId=2e6ca73d-6618-4635-962b-59b478651116&utm_source=vstsproduct&utm_medium=ExtHubManageList) 插件，可以尝试将其安装至自己的组织中进行使用。
+此外，K6 还支持集成至 Azure Pipelines 中进行压测，目前 Azure Pipelines 的 Marketplace 已经提供来 [k6 Load Testing](https://marketplace.visualstudio.com/items?itemName=k6.k6-load-test&targetId=2e6ca73d-6618-4635-962b-59b478651116&utm_source=vstsproduct&utm_medium=ExtHubManageList) 插件，可以尝试将其安装至自己的组织中进行使用。
 具体使用方式可以参考文末的相关链接。
 
 ### 结果可视化
@@ -204,12 +228,11 @@ k6 cloud sample-test.js
 
 ## 相关参考
 
-- [如何使用k6做性能测试](https://insights.thoughtworks.cn/performance-testing-k6/)
-- [k6负载测试学习知识](https://www.cnblogs.com/kerwincui/p/15553623.html)
+- [如何使用 k6 做性能测试](https://insights.thoughtworks.cn/performance-testing-k6/)
+- [k6 负载测试学习知识](https://www.cnblogs.com/kerwincui/p/15553623.html)
 - [Software performance testing](https://en.wikipedia.org/wiki/Software_performance_testing)
 - [K6](https://github.com/grafana/k6)
 - [Load testing with Azure Pipelines](https://k6.io/blog/integrating-load-testing-with-azure-pipelines/)
 - [Load Testing With Azure DevOps And K6](https://medium.com/microsoftazure/load-testing-with-azure-devops-and-k6-839be039b68a)
 - [On .NET Live - Performance and Load testing with k6](https://www.youtube.com/watch?v=PYHZLCTC7i0)
 - [Getting started with API Load Testing (Stress, Spike, Load, Soak)](https://www.youtube.com/watch?v=r-Jte8Y8zag)
-
